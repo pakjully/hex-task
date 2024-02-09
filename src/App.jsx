@@ -24,7 +24,7 @@ function App() {
           )}
         />
         <Route
-          path="/statistics"
+          path="/"
           element={(
             <TablePage />
           )}

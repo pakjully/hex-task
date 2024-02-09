@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import './TablePage.scss';
 import { sortObject} from './SortObject';
 import Pagination from 'react-bootstrap/Pagination';
@@ -23,6 +24,7 @@ export function TablePage() {
   const [offset, setOffset] = React.useState(0);
   const [limit, setLimit] = React.useState(20);
   const [totalEntries, setTotalEntries] = React.useState('')
+  const navigate = useNavigate();
 
 
   let pages = [];
@@ -45,11 +47,11 @@ export function TablePage() {
       },
     })
       .then((response) => {
-        const totalEntries = ([...response.headers.entries()][2][1]);
-        setTotalEntries(totalEntries);
         if (response.status === 401) {
-          return response.json().then((data) => alert(data.detail));
+          navigate('/login');
         } else if (response.status === 200) {
+          const totalEntries = ([...response.headers.entries()][2][1]);
+          setTotalEntries(totalEntries);
           return response.json().then((data) => setData(data))
         }
       })
