@@ -1,5 +1,5 @@
-import './App.scss';
 import React from 'react';
+import './App.scss';
 import { RegisterPage } from './Pages/RegisterPage/RegisterPage';
 import { LoginPage } from './Pages/LoginPage/LoginPage';
 import { TablePage } from './Pages/TablePage/TablePage';

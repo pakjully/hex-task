@@ -21,6 +21,7 @@ export function LoginPage() {
   }
 
   function handleSubmit(e) {
+
     e.preventDefault();
     fetch('https://front-test.hex.team/api/login', {
       method: "POST",
