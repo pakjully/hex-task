@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './TablePage.scss';
-import { sortObject} from './SortObject';
+import { sortObject } from './SortObject';
 import Pagination from 'react-bootstrap/Pagination';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
@@ -12,25 +12,26 @@ import { MyTable } from './Table/MyTable';
 
 export function TablePage() {
   const userToken = localStorage.getItem("access_token");
-  const [fields, setFields] = React.useState({
-    longLink: '',
-    shortLink: '',
-  })
-  const [data, setData] = React.useState([]);
-  const [sortShort, setSortShort] = React.useState(sortObject.short.desc);
-  const [sortTarget, setSortTarget] = React.useState(sortObject.target.desc);
-  const [sortCounter, setSortCounter] = React.useState(sortObject.counter.desc);
-  const [currentPage, setCurrentPage] = React.useState(1)
-  const [offset, setOffset] = React.useState(0);
-  const [limit, setLimit] = React.useState(20);
-  const [totalEntries, setTotalEntries] = React.useState('')
+  const [longLink, setLongLink] = useState('');
+  const [shortLink, setShortLink] = useState('');
+  const [data, setData] = useState([]);
+  const [sortShort, setSortShort] = useState(sortObject.short.desc);
+  const [sortTarget, setSortTarget] = useState(sortObject.target.desc);
+  const [sortCounter, setSortCounter] = useState(sortObject.counter.desc);
+  const [currentPage, setCurrentPage] = useState(1)
+  const [offset, setOffset] = useState(0);
+  const [limit, setLimit] = useState(20);
+  const [totalEntries, setTotalEntries] = useState('')
   const navigate = useNavigate();
 
-
-  let pages = [];
+  const pages = [];
   for (let number=1; number<=Math.ceil(totalEntries / limit);number++ ) {
     pages.push(number);
   }
+
+  const handleSortTarget = useCallback(() => setSortTarget((prevState) => prevState === sortObject.target.desc ? sortObject.target.asc : sortObject.target.desc ))
+  const handleSortShort = useCallback(() => setSortShort((prevState) => prevState === sortObject.short.desc ? sortObject.short.asc : sortObject.short.desc))
+  const handleSortCounter = useCallback(() => setSortCounter((prevState) => prevState === sortObject.counter.desc ? sortObject.counter.asc : sortObject.counter.desc ))
 
   React.useEffect(() => {
     const sortTargetString = sortTarget ? `order=${sortTarget}` : '';
@@ -64,15 +65,12 @@ export function TablePage() {
   }
 
   function handleChange(e) {
-    const { name, value } = e.target;
-    setFields((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }))
+    const { value } = e.target;
+    setLongLink(value);
   }
   function handleSubmit(e) {
     e.preventDefault();
-    fetch(`https://front-test.hex.team/api/squeeze?link=${fields.longLink}`, {
+    fetch(`https://front-test.hex.team/api/squeeze?link=${longLink}`, {
       method: "POST",
       headers: {
         'Content-Type': 'application/json',
@@ -84,10 +82,7 @@ export function TablePage() {
           alert('Ошибка сервера')
         } else if(response.status === 200) {
           return response.json().then((data) => {
-            setFields((prevState) => ({
-              ...prevState,
-              shortLink: data.short
-            }))
+            setShortLink(data.short)
           })
         }
       })
@@ -102,7 +97,6 @@ export function TablePage() {
           <Col sm={7}>
             <Form.Control
               onChange={handleChange}
-              name="longLink"
               type="text"
               placeholder="Ссылка"
             />
@@ -121,8 +115,8 @@ export function TablePage() {
             <p className="text-result">Результат</p>
           </Col>
           <Col sm={10}>
-            {fields.shortLink &&
-        <p className="link-result">https://front-test.hex.team/s/{fields.shortLink}</p>
+            {shortLink &&
+        <p className="link-result">https://front-test.hex.team/s/{shortLink}</p>
             }
           </Col>
         </Row>
@@ -130,11 +124,11 @@ export function TablePage() {
         <MyTable
           data={data}
           sortShort={sortShort}
-          setSortShort={setSortShort}
           sortTarget={sortTarget}
-          setSortTarget={setSortTarget}
           sortCounter={sortCounter}
-          setSortCounter={setSortCounter}
+          handleSortTarget={handleSortTarget}
+          handleSortShort={handleSortShort}
+          handleSortCounter={handleSortCounter}
         />
         <p>Всего записей: {totalEntries}</p>
         <Pagination className="table-pagination">

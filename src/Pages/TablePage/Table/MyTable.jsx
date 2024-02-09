@@ -4,34 +4,42 @@ import { FaArrowUp, FaArrowDown } from 'react-icons/fa';
 import { sortObject } from '../SortObject';
 
 export function MyTable(props) {
-  const { sortTarget, setSortTarget, sortShort, setSortShort, sortCounter, setSortCounter, data } = props;
+  const {
+    sortTarget,
+    sortShort,
+    sortCounter,
+    data,
+    handleSortTarget,
+    handleSortShort,
+    handleSortCounter
+  } = props;
   return(
     <Table striped bordered hover>
       <thead>
         <tr>
           <th>ID</th>
           <th
-            onClick={() => setSortTarget((prevState) => prevState === sortObject.target.desc ? sortObject.target.asc : sortObject.target.desc )}
+            onClick={handleSortTarget}
           >Оригинальная ссылка
-            {sortTarget === sortObject.target.desc  ?
-              <FaArrowDown /> :
-              <FaArrowUp />
+            {sortTarget === sortObject.target.desc
+              ? <FaArrowDown />
+              :<FaArrowUp />
             }
           </th>
-          <th onClick={() => setSortShort((prevState) => prevState === sortObject.short.desc ? sortObject.short.asc : sortObject.short.desc)}
+          <th onClick={handleSortShort}
           >
             Короткая ссылка
-            {sortShort === sortObject.short.desc ?
-              <FaArrowDown /> :
-              <FaArrowUp />
+            {sortShort === sortObject.short.desc
+              ? <FaArrowDown />
+              :<FaArrowUp />
             }
           </th>
-          <th onClick={() => setSortCounter((prevState) => prevState === sortObject.counter.desc ? sortObject.counter.asc : sortObject.counter.desc )}
+          <th onClick={handleSortCounter}
           >
           Счетчик
-            {sortCounter=== sortObject.counter.desc ?
-              <FaArrowDown /> :
-              <FaArrowUp />
+            {sortCounter === sortObject.counter.desc
+              ? <FaArrowDown />
+              :<FaArrowUp />
             }
           </th>
         </tr>
