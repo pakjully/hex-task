@@ -7,8 +7,6 @@ import Col from 'react-bootstrap/Col';
 
 export function LoginPage() {
   const navigate = useNavigate();
-
-
   const [fields, setFields] = React.useState({
     username: '',
     password: '',
@@ -47,7 +45,6 @@ export function LoginPage() {
         }
       })
   }
-  console.log(fields);
   return(
     <div className="login">
       <p className="login-text">Войдите, чтобы получить доступ к сервису</p>
