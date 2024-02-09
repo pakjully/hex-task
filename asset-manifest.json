@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/hex-task/static/css/main.503ad987.css",
+    "main.js": "/hex-task/static/js/main.8547bdc3.js",
+    "static/js/592.7f72a991.chunk.js": "/hex-task/static/js/592.7f72a991.chunk.js",
+    "index.html": "/hex-task/index.html",
+    "main.503ad987.css.map": "/hex-task/static/css/main.503ad987.css.map",
+    "main.8547bdc3.js.map": "/hex-task/static/js/main.8547bdc3.js.map",
+    "592.7f72a991.chunk.js.map": "/hex-task/static/js/592.7f72a991.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.503ad987.css",
+    "static/js/main.8547bdc3.js"
+  ]
+}
