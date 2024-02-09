@@ -4,7 +4,7 @@
 
 ## Живой демо-сайт
 
-[https://pakjully.github.io/hex-task]
+https://pakjully.github.io/hex-task
 
 
 ## Установка
