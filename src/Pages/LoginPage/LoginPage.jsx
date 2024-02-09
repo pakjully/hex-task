@@ -47,7 +47,6 @@ export function LoginPage() {
         }
       })
   }
-  console.log(fields);
   return(
     <div className="login">
       <p className="login-text">Войдите, чтобы получить доступ к сервису</p>
