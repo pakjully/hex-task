@@ -34,17 +34,18 @@ export function LoginPage() {
 
   function handleSubmit(e) {
     e.preventDefault()
-    let passwordMatch = false;
-    if (fields.password.value !== fields.repeatPassword.value) {
-      setFields((prevState) => ({
-        ...prevState,
-        repeatPassword: {
-          ...prevState.repeatPassword,
-          error: "Пароли не совпадают",
-        }}))
-    } else {
-      passwordMatch = true;
-    }
+    // let passwordMatch = false;
+    // if (fields.password.value !== fields.repeatPassword.value) {
+    //   setFields((prevState) => ({
+    //     ...prevState,
+    //     repeatPassword: {
+    //       ...prevState.repeatPassword,
+    //       error: "Пароли не совпадают",
+    //     }}))
+    // } else {
+    //   passwordMatch = true;
+    // }
+    const passwordMatch = fields.password.value === fields.repeatPassword.value;
     if (passwordMatch) {
       fetch(`https://front-test.hex.team/api/register?username=${fields.username.value}&password=${fields.password.value}`,{
         headers: {
@@ -59,6 +60,13 @@ export function LoginPage() {
             console.log("go to login page");
           }
         })
+    } else {
+      setFields((prevState) => ({
+        ...prevState,
+        repeatPassword: {
+          ...prevState.repeatPassword,
+          error: "Пароли не совпадают",
+        }}))
     }
   }
 
@@ -80,7 +88,8 @@ export function LoginPage() {
           <Col sm="8">
             <Form.Control
               onChange={handleChange}
-              name="username" type="text"
+              name="username"
+              type="text"
               placeholder="Логин"
               required
             />
