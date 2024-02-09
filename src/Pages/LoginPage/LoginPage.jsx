@@ -1,9 +1,11 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import './LoginPage.scss';
 
 export function LoginPage() {
   const navigate = useNavigate();
@@ -41,7 +43,7 @@ export function LoginPage() {
         } else if (response.status === 200) {
           return response.json().then((data) => {
             localStorage.setItem("access_token", data.access_token);
-            navigate('/statistics')
+            navigate('/');
           })
         }
       })
@@ -73,12 +75,18 @@ export function LoginPage() {
               required/>
           </Col>
         </Form.Group>
-        <Button
-          variant="primary"
-          type="Submit"
-        >
+        <Form.Group as={Row} className="mb-3">
+          <Col sm="4"></Col>
+          <Col sm="8" className="login-link">
+            <Button
+              variant="primary"
+              type="Submit"
+            >
           Войти
-        </Button>
+            </Button>
+            <Link className ="link"  to='/auth'>Зарегистрироваться</Link>
+          </Col>
+        </Form.Group>
       </Form>
     </div>
 

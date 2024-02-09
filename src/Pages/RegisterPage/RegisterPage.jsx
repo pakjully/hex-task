@@ -5,6 +5,7 @@ import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 export function RegisterPage() {
   const [fields, setFields] = React.useState({
@@ -113,12 +114,18 @@ export function RegisterPage() {
             <Form.Control.Feedback type="invalid">{fields.repeatPassword.error}</Form.Control.Feedback>
           </Col>
         </Form.Group>
-        <Button
-          variant="primary"
-          type="Submit"
-        >
+        <Form.Group as={Row} className="mb-3">
+          <Col sm="4"></Col>
+          <Col sm="8" className="login-link">
+            <Button
+              variant="primary"
+              type="Submit"
+            >
           Зарегистрироваться
-        </Button>
+            </Button>
+            <Link className ="link"  to='/login'>Войти</Link>
+          </Col>
+        </Form.Group>
       </Form>
     </div>
   )
