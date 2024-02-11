@@ -20,6 +20,7 @@ export function TablePage() {
   const [sortCounter, setSortCounter] = useState(sortObject.counter.desc);
   const [currentPage, setCurrentPage] = useState(1)
   const [offset, setOffset] = useState(0);
+  // eslint-disable-next-line no-unused-vars
   const [limit, setLimit] = useState(20);
   const [totalEntries, setTotalEntries] = useState('')
   const navigate = useNavigate();

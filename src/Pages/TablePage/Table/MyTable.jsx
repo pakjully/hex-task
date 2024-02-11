@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React from 'react';
 import { Table } from 'react-bootstrap';
 import { FaArrowUp, FaArrowDown } from 'react-icons/fa';
