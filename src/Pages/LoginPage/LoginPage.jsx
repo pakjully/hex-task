@@ -32,6 +32,7 @@ export function LoginPage() {
     username: '',
     password: '',
   })
+  const [ isRequestSent, setIsRequestSent ] = useState(false);
 
   function validateField(name) {
     const value = fields[name];
@@ -48,7 +49,7 @@ export function LoginPage() {
     });
     return isFieldInvalid;
   }
-  
+
   function handleChange(e) {
     const { name, value } = e.target;
     setFields((prevState) => ({
@@ -59,6 +60,7 @@ export function LoginPage() {
 
   function handleSubmit(e) {
     e.preventDefault();
+    setIsRequestSent(true);
     fetch('https://front-test.hex.team/api/login', {
       method: "POST",
       headers: {
@@ -80,6 +82,9 @@ export function LoginPage() {
             navigate('/');
           })
         }
+      })
+      .finally(() => {
+        setIsRequestSent(false);
       })
   }
 
@@ -135,7 +140,7 @@ export function LoginPage() {
             <Button
               variant="primary"
               type="Submit"
-              disabled={fields.username === '' || fields.password.length < 6}
+              disabled={fields.username === '' || fields.password.length < 6 || isRequestSent}
             >
           Войти
             </Button>

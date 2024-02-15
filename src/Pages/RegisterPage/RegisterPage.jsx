@@ -35,6 +35,8 @@ export function RegisterPage() {
     repeatPassword: '',
   })
 
+  const [ isRequestSent, setIsRequestSent ] = useState(false);
+
   const navigate = useNavigate();
 
   function validateField(name) {
@@ -70,6 +72,7 @@ export function RegisterPage() {
       }))
       return;
     }
+    setIsRequestSent(true);
     fetch(`https://front-test.hex.team/api/register?username=${fields.username}&password=${fields.password}`,{
       headers: {
         'accept': 'application/json',
@@ -82,6 +85,9 @@ export function RegisterPage() {
         } else {
           navigate('/login');
         }
+      })
+      .finally(() => {
+        setIsRequestSent(false);
       })
   }
 
@@ -154,7 +160,7 @@ export function RegisterPage() {
             <Button
               variant="primary"
               type="Submit"
-              disabled={fields.password.length < 6 || fields.repeatPassword.length < 6 || fields.username === ''}
+              disabled={fields.password.length < 6 || fields.repeatPassword.length < 6 || fields.username === '' || isRequestSent}
             >
           Зарегистрироваться
             </Button>
