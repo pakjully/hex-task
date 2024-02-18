@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState} from 'react';
 import './RegisterPage.scss';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
@@ -7,71 +7,101 @@ import Col from 'react-bootstrap/Col';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 
+function validateRequireness(value) {
+  const error = value === '' ? 'Поле является обязательным' : '';
+  return error;
+}
+
+function validateLength(value) {
+  const error = value.length < 6 ? "Минимальная длина 6 символов" : '';
+  return error;
+}
+
+const validators = {
+  username: [validateRequireness],
+  password: [validateRequireness, validateLength],
+  repeatPassword: [validateRequireness, validateLength],
+}
+
 export function RegisterPage() {
-  const [fields, setFields] = React.useState({
-    username: {
-      value: '',
-      error: ''
-    },
-    password: {
-      value: '',
-      error: ''
-    },
-    repeatPassword: {
-      value: '',
-      error: ''
-    }
+  const [fields, setFields] = useState({
+    username: '',
+    password: '',
+    repeatPassword: '',
   })
+  const [errors, setErrors] = useState({
+    username: '',
+    password: '',
+    repeatPassword: '',
+  })
+
+  const [ isRequestSent, setIsRequestSent ] = useState(false);
+
   const navigate = useNavigate();
+
+  function validateField(name) {
+    const value = fields[name];
+    const fieldValidators = validators[name] ?? [];
+    const isFieldInvalid = fieldValidators.some((validator) => {
+      const validationResult = validator(value);
+      if (validationResult) {
+        setErrors((prevData) => ({
+          ...prevData,
+          [name]: validationResult,
+        }));
+      }
+      return Boolean(validationResult);
+    });
+    return isFieldInvalid;
+  }
+
   function handleChange(event) {
     const { value, name } = event.target;
     setFields((prevState) => ({
       ...prevState,
-      [name]: {
-        ...prevState[name],
-        value: value,
-      },
+      [name]: value,
     }))
   }
 
   function handleSubmit(e) {
     e.preventDefault()
-    let passwordMatch = false;
-    if (fields.password.value !== fields.repeatPassword.value) {
-      setFields((prevState) => ({
+    if (fields.password !== fields.repeatPassword) {
+      setErrors((prevState) => ({
         ...prevState,
-        repeatPassword: {
-          ...prevState.repeatPassword,
-          error: "Пароли не совпадают",
-        }}))
-    } else {
-      passwordMatch = true;
+        repeatPassword: "Пароли не совпадают",
+      }))
+      return;
     }
-    if (passwordMatch) {
-      fetch(`https://front-test.hex.team/api/register?username=${fields.username.value}&password=${fields.password.value}`,{
-        headers: {
-          'accept': 'application/json',
-        },
-        method: 'POST',
+    setIsRequestSent(true);
+    fetch(`https://front-test.hex.team/api/register?username=${fields.username}&password=${fields.password}`,{
+      headers: {
+        'accept': 'application/json',
+      },
+      method: 'POST',
+    })
+      .then((response) => {
+        if (response.status === 400) {
+          return response.json().then((data) => alert(data.detail))
+        } else {
+          navigate('/login');
+        }
       })
-        .then((response) => {
-          if (response.status === 400) {
-            return response.json().then((data) => alert(data.detail))
-          } else {
-            navigate('/login');
-          }
-        })
-    }
+      .finally(() => {
+        setIsRequestSent(false);
+      })
   }
 
-  function handleFocus(){
-    setFields((prevState) => ({
+  function handleFocus(e){
+    const { name } = e.target
+    setErrors((prevState) => ({
       ...prevState,
-      repeatPassword: {
-        ...prevState.repeatPassword,
-        error: ''
-      },
+      [name]: '',
     }))
+  }
+
+  function handleBlur(e) {
+    const { name } = e.target;
+    validateField(name)
   }
   return(
     <div className="login">
@@ -82,10 +112,15 @@ export function RegisterPage() {
           <Col sm="8">
             <Form.Control
               onChange={handleChange}
-              name="username" type="text"
+              name="username"
+              type="text"
               placeholder="Логин"
+              onBlur={handleBlur}
+              onFocus={handleFocus}
+              isInvalid={errors.username}
               required
             />
+            <Form.Control.Feedback type="invalid">{errors.username}</Form.Control.Feedback>
           </Col>
         </Form.Group>
         <Form.Group as={Row} className="mb-3">
@@ -96,7 +131,11 @@ export function RegisterPage() {
               name="password"
               type="password"
               placeholder="Пароль"
+              onBlur={handleBlur}
+              onFocus={handleFocus}
+              isInvalid={errors.password}
               required/>
+            <Form.Control.Feedback type="invalid">{errors.password}</Form.Control.Feedback>
           </Col>
         </Form.Group>
         <Form.Group as={Row} className="mb-3">
@@ -107,11 +146,12 @@ export function RegisterPage() {
               name="repeatPassword"
               type="password"
               placeholder="Повторите пароль"
-              isInvalid={fields.repeatPassword.error}
+              isInvalid={errors.repeatPassword}
               onFocus={handleFocus}
+              onBlur={handleBlur}
               required
             />
-            <Form.Control.Feedback type="invalid">{fields.repeatPassword.error}</Form.Control.Feedback>
+            <Form.Control.Feedback type="invalid">{errors.repeatPassword}</Form.Control.Feedback>
           </Col>
         </Form.Group>
         <Form.Group as={Row} className="mb-3">
@@ -120,6 +160,7 @@ export function RegisterPage() {
             <Button
               variant="primary"
               type="Submit"
+              disabled={fields.password.length < 6 || fields.repeatPassword.length < 6 || fields.username === '' || isRequestSent}
             >
           Зарегистрироваться
             </Button>

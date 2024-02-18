@@ -23,6 +23,7 @@ export function TablePage() {
   // eslint-disable-next-line no-unused-vars
   const [limit, setLimit] = useState(20);
   const [totalEntries, setTotalEntries] = useState('')
+  const [ isRequestSent, setIsRequestSent ] = useState(false);
   const navigate = useNavigate();
 
   const pages = [];
@@ -71,6 +72,7 @@ export function TablePage() {
   }
   function handleSubmit(e) {
     e.preventDefault();
+    setIsRequestSent(true)
     fetch(`https://front-test.hex.team/api/squeeze?link=${longLink}`, {
       method: "POST",
       headers: {
@@ -86,6 +88,9 @@ export function TablePage() {
             setShortLink(data.short)
           })
         }
+      })
+      .finally(() => {
+        setIsRequestSent(false);
       })
   }
   return(
@@ -106,6 +111,7 @@ export function TablePage() {
             <Button
               variant="primary"
               type="Submit"
+              disabled={isRequestSent}
             >
           Преобразовать
             </Button>
