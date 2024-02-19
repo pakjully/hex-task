@@ -9,19 +9,30 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import { MyTable } from './Table/MyTable';
 
-
+const queryParams = window.location.search.replace('?', '').split('&').map((query) => query.split('='));
+const initialValues = queryParams.reduce((result, currentParam) => {
+  const [ key, value ] = currentParam;
+  return {
+    ...result,
+    [key]: value,
+  }
+}, {
+  sortShort: sortObject.short.desc,
+  sortTarget: sortObject.target.desc,
+  sortCounter: sortObject.counter.desc,
+  currentPage: 1,
+})
+const limit = 1;
 export function TablePage() {
   const userToken = localStorage.getItem("access_token");
   const [longLink, setLongLink] = useState('');
   const [shortLink, setShortLink] = useState('');
   const [data, setData] = useState([]);
-  const [sortShort, setSortShort] = useState(sortObject.short.desc);
-  const [sortTarget, setSortTarget] = useState(sortObject.target.desc);
-  const [sortCounter, setSortCounter] = useState(sortObject.counter.desc);
-  const [currentPage, setCurrentPage] = useState(1)
-  const [offset, setOffset] = useState(0);
-  // eslint-disable-next-line no-unused-vars
-  const [limit, setLimit] = useState(20);
+  const [sortShort, setSortShort] = useState(initialValues.sortShort);
+  const [sortTarget, setSortTarget] = useState(initialValues.sortTarget);
+  const [sortCounter, setSortCounter] = useState(initialValues.sortCounter);
+  const [currentPage, setCurrentPage] = useState(Number(initialValues.currentPage));
+  const [offset, setOffset] = useState((Number(initialValues.currentPage)- 1) * limit);
   const [totalEntries, setTotalEntries] = useState('')
   const [ isRequestSent, setIsRequestSent ] = useState(false);
   const navigate = useNavigate();
@@ -53,6 +64,12 @@ export function TablePage() {
         if (response.status === 401) {
           navigate('/login');
         } else if (response.status === 200) {
+          const sortTargetString = sortTarget ? `sortTarget=${sortTarget}` : '';
+          const sortShortString = sortShort ? `sortShort=${sortShort}` : '';
+          const sortCounterString = sortCounter ? `sortCounter=${sortCounter}` : '';
+          const currentPageString = currentPage ? `currentPage=${currentPage}` : '';
+          const queryString = [sortTargetString, sortShortString, sortCounterString, currentPageString].filter(Boolean).join('&');
+          window.history.pushState('newState', '', `${window.location.pathname}?${queryString}`);
           const totalEntries = ([...response.headers.entries()][2][1]);
           setTotalEntries(totalEntries);
           return response.json().then((data) => setData(data))
