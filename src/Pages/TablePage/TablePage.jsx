@@ -110,6 +110,10 @@ export function TablePage() {
         setIsRequestSent(false);
       })
   }
+
+  function handleResultClick() {
+    navigator.clipboard.writeText(`https://front-test.hex.team/s/${shortLink}`)
+  }
   return(
     <div>
       <Form className="form" onSubmit={handleSubmit}>
@@ -138,9 +142,19 @@ export function TablePage() {
           <Col sm={2}>
             <p className="text-result">Результат</p>
           </Col>
-          <Col sm={10}>
+          <Col sm={7}>
             {shortLink &&
         <p className="link-result">https://front-test.hex.team/s/{shortLink}</p>
+            }
+          </Col>
+          <Col sm={3}>
+            {shortLink &&
+             <Button className="copy-result"
+               variant="secondary"
+               onClick={handleResultClick}
+             >
+              Копировать
+             </Button>
             }
           </Col>
         </Row>
